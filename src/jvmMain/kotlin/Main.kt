@@ -1,18 +1,14 @@
 import androidx.compose.material.MaterialTheme
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.Button
 import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.ExperimentalComposeUiApi
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -24,59 +20,57 @@ import java.awt.FileDialog
 import java.awt.Frame
 import java.io.File
 
+
 @Composable
 @Preview
 fun App() {
+    val viewModel: AppViewModel by remember { mutableStateOf(AppViewModel()) }
+    val state = viewModel.state
     var isFileChooserOpen by remember { mutableStateOf(false) }
-//    var fileContent by remember { mutableStateOf<List<String>?>(null) }
-    var grid by remember { mutableStateOf<Array<Array<String>>?>(null) }
-    var n by remember { mutableStateOf(0) }
+
     if (isFileChooserOpen) {
         FileDialog {
             isFileChooserOpen = false
-            println("Result $it")
-            val currentDir = System.getProperty("user.dir")
-            println("The current working directory is: $currentDir")
-            val fileContent = it?.let { it1 -> File("$currentDir\\src\\jvmMain\\SamplePuzzles\\Input\\$it1").readLines() }
-
-            // read the grid size
-
-            n = fileContent?.get(0)?.toInt()!!
-
-            // read the symbols
-            val symbols = fileContent.get(1).split(" ")
-
-            // read the grid
-            grid = n.let { it1 -> Array(it1) { Array(n) { "" } } }
-            for (i in 0 until n) {
-                val row = fileContent[i + 2].split(" ")
-                for (j in 0 until n) {
-                    grid?.get(i)?.set(j, row[j])
-                }
+            if (it != null) {
+                state.setData(it)
             }
-            println(fileContent)
         }
     }
     MaterialTheme {
-        Column {
-            Row {
-                Button(onClick = {
-                    isFileChooserOpen = true
-                }) {
-                    Text("hello")
+        Column(modifier = Modifier.fillMaxSize()) {
+            Row(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.1f)) {
+                Column {
+                    Button(onClick = {
+                        isFileChooserOpen = true
+                    }) {
+                        Text("Select Board")
+                    }
+                }
+                Column {
+                    Button(onClick = {
+                        state.selectedCell?.let { state.solveCell( it) }
+                    }) {
+                        Text("Solve Board")
+                    }
                 }
             }
-            Row {
-                if (grid != null && n != 0) {
-                    LazyVerticalGrid(modifier = Modifier.border(shape = RectangleShape, width = 1.dp, color = Color.Black), columns = GridCells.Fixed(n)) {
-                        grid?.forEach { row ->
+            Row(modifier = Modifier.fillMaxSize()) {
+                    LazyVerticalGrid(modifier = Modifier.border(shape = RectangleShape, width = 1.dp, color = Color.Black).fillMaxSize(), columns = GridCells.Adaptive(50.dp)) {
+                        state.grid.forEach { row ->
                             row.forEach { cell ->
-                                item { Text(modifier = Modifier.border(shape = RectangleShape, width = 1.dp, color = Color.Black), text = cell) }
+                                item {Row(horizontalArrangement = Arrangement.Center,modifier = Modifier.border(
+                                    shape = RectangleShape,
+                                    width = 1.dp,
+                                    color = Color.Black
+                                ).padding(vertical = 10.dp, horizontal = 0.dp)
+                                    .clickable{state.selectedCell = cell}){
+                                    Text(cell.value)
+                                }
+                                }
                             }
                         }
                     }
                 }
-            }
         }
     }
 }

@@ -1,12 +1,14 @@
-abstract class SudokuSolver(cellRow: Int, cellCol: Int, grid: List<List<Cell>>) {
+abstract class SudokuSolver(cellRow: Int, cellCol: Int, grid: List<List<Cell>>, length: Int) {
     var cellRow: Int
     var cellCol: Int
     var grid: List<List<Cell>>
+    var length: Int
 //private var isSolved: Boolean = false
     init {
         this.cellRow = cellRow
         this.cellCol = cellCol
         this.grid = grid
+        this.length = length
     }
     abstract fun checkRow(row: List<Cell>): Boolean
     abstract fun checkColumn(col: List<Cell>): Boolean
@@ -24,7 +26,7 @@ abstract class SudokuSolver(cellRow: Int, cellCol: Int, grid: List<List<Cell>>) 
         return grid.subList(boxRow * 3, boxRow * 3 + 3).map { it.subList(boxCol * 3, boxCol * 3 + 3) }
     }
 //    Template Method
-    public fun solve(): Boolean{
+    fun solve(): Boolean{
         return checkRow(getRow()) || checkColumn(getColumn()) || checkBox(getBox())
     }
 
