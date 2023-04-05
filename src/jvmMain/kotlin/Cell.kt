@@ -11,6 +11,10 @@ init {
 }
 
     override fun toString(): String {
-        return value
+        return "Cell Value: $value\nPotential Values: $potentialValues\n"
+    }
+
+    fun removePotentialValue(value: String){
+        potentialValues.remove(value)
     }
 }

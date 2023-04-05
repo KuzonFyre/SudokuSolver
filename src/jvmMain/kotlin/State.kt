@@ -1,5 +1,6 @@
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import java.io.File
 
@@ -8,17 +9,41 @@ class AppViewModel {
 }
 class State {
         var n by mutableStateOf(0)
-        var grid by mutableStateOf(arrayOf(arrayOf<Cell>()))
-        var symbols by mutableStateOf(mutableSetOf<String>())
-        var selectedCell: Cell? = null
+        var grid by mutableStateOf(mutableListOf(mutableListOf<Cell?>()))
+        var values: MutableSet<String> = mutableSetOf()
+        var selectedCell by mutableStateOf<Cell?>(null)
+        var selectedValue by mutableStateOf("")
 
-    fun solveCell(cell: Cell){
-        selectedCell = cell
-        val solver = BruteSolver(cell.row, cell.col, grid.map(Array<Cell>::toList), n)
-        if (solver.solve()){
-            grid = solver.grid.map(List<Cell>::toTypedArray).toTypedArray()
+    fun solve(){
+
+        for (i in 0 until n){
+            for (j in 0 until n){
+                if (grid[i][j]?.value == "-") {
+                    println("\nGrid:$grid")
+                    val solver = grid[i][j]?.let { BruteSolver(it, (grid as List<List<Cell>>)) }
+                    if (solver != null) {
+                        println("Checking")
+                        if (solver.solve()) {
+                            println("Solved:" + solver.grid[i][j].value)
+                        }
+                    }
+                }
+            }
         }
+        print("Solved Grid:$grid")
     }
+    fun solveCell(): String{
+        if (selectedCell?.value == "-"){
+            val solver = BruteSolver(selectedCell!!, grid as List<List<Cell>>)
+            println("Checking")
+            if (solver.solve()) {
+                println("Solved:" + selectedCell!!.value)
+            }
+        }
+
+        return selectedCell?.value ?: ""
+    }
+
 
     fun setData(fileName: String?) {
         println("Result $fileName")
@@ -28,21 +53,25 @@ class State {
 
         // read the grid size
         n = fileContent?.get(0)?.toInt()!!
+        values = fileContent[1].split(" ").toMutableSet()
 
-        // read the symbols
-        symbols = fileContent[1].split(" ").toMutableSet()
-
+        println("grid:$grid")
+        grid = MutableList(n) {MutableList(n) {null }}
         // read the grid
-        grid = Array(n) { Array(n) { Cell("-1",symbols,-1,-1) } }
         for (i in 0 until n) {
             val row = fileContent[i + 2].split(" ")
             for (j in 0 until n) {
-                grid[i][j].value = row[j]
-                grid[i][j].row = i
-                grid[i][j].col = j
+                val entries = fileContent[1].split(" ").toMutableSet()
+                grid[i][j] = Cell(row[j], entries, i, j)
             }
         }
-
+        println("grid:$grid")
+//        grid.forEach { row ->
+//            row.forEach { cell ->
+//                print(cell)
+//            }
+//            println()
+//        }
     }
 }
 

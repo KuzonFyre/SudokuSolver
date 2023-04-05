@@ -48,9 +48,9 @@ fun App() {
                 }
                 Column {
                     Button(onClick = {
-                        state.selectedCell?.let { state.solveCell( it) }
+                        state.solve()
                     }) {
-                        Text("Solve Board")
+                        Text("Solve grid")
                     }
                 }
             }
@@ -63,8 +63,14 @@ fun App() {
                                     width = 1.dp,
                                     color = Color.Black
                                 ).padding(vertical = 10.dp, horizontal = 0.dp)
-                                    .clickable{state.selectedCell = cell}){
-                                    Text(cell.value)
+                                    .selectable(selected = state.selectedCell == cell, onClick = {
+                                        state.selectedCell = cell
+                                    }))
+                                {
+                                    if (cell != null) {
+                                        Text(cell.value)
+                                    }
+                                    //print("Potential Values:" + cell.potentialValues.toString())
                                 }
                                 }
                             }

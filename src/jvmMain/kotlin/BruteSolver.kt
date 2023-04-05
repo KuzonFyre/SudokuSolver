@@ -1,31 +1,24 @@
-import kotlin.math.sqrt
-
-class BruteSolver(cellRow: Int, cellCol: Int, grid: List<List<Cell>>, length: Int) : SudokuSolver(cellRow,cellCol,grid, length){
-    private var cell: Cell = grid[cellRow][cellCol]
+class BruteSolver(cell: Cell, grid: List<List<Cell>>) : SudokuSolver(cell,grid){
     fun setValue ():Boolean{
         if (cell.potentialValues.size == 1) {
+            grid
             cell.value = cell.potentialValues.first()
             return true
         }
         return false
     }
     override fun checkRow(row: List<Cell>): Boolean {
-        for (i in row.indices){
-            println(row[i].value)
-            println(cell.potentialValues.toString())
-            if (cell.potentialValues.contains(row[i].value)){
-                cell.potentialValues.remove(row[i].value)
-            }
+        //println("potential Values:" + cell.potentialValues)
+        for (c in row){
+            cell.removePotentialValue(c.value)
         }
-        cell.potentialValues.forEach { println(it) }
         return setValue()
     }
 
+
     override fun checkColumn(col: List<Cell>): Boolean {
-        for (i in col.indices){
-            if (cell.potentialValues.contains(col[i].value)){
-                cell.potentialValues.remove(col[i].value)
-            }
+        for (cell in col){
+            cell.potentialValues.remove(cell.value)
         }
         return setValue()
     }
@@ -33,9 +26,6 @@ class BruteSolver(cellRow: Int, cellCol: Int, grid: List<List<Cell>>, length: In
     override fun checkBox(box: List<List<Cell>>): Boolean {
         for (i in box.indices){
             for (j in box[i].indices){
-                if (cell.potentialValues.contains(box[i][j].value)){
-                    cell.potentialValues.remove(box[i][j].value)
-                }
             }
         }
         return setValue()
