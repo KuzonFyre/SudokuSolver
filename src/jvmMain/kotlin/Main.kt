@@ -1,12 +1,12 @@
-import androidx.compose.material.MaterialTheme
+
 import androidx.compose.desktop.ui.tooling.preview.Preview
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.Button
+import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
@@ -18,21 +18,19 @@ import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.application
 import java.awt.FileDialog
 import java.awt.Frame
-import java.io.File
 
 
 @Composable
 @Preview
 fun App() {
-    val viewModel: AppViewModel by remember { mutableStateOf(AppViewModel()) }
+    val viewModel: AppViewModel = remember{ AppViewModel() }
     val state = viewModel.state
     var isFileChooserOpen by remember { mutableStateOf(false) }
-
     if (isFileChooserOpen) {
         FileDialog {
             isFileChooserOpen = false
             if (it != null) {
-                state.setData(it)
+                viewModel.setData(it)
             }
         }
     }
@@ -48,7 +46,8 @@ fun App() {
                 }
                 Column {
                     Button(onClick = {
-                        state.solve()
+                        viewModel.solve()
+                        //viewModel.solveCell()
                     }) {
                         Text("Solve grid")
                     }
@@ -56,34 +55,32 @@ fun App() {
             }
             Row(modifier = Modifier.fillMaxSize()) {
                     LazyVerticalGrid(modifier = Modifier.border(shape = RectangleShape, width = 1.dp, color = Color.Black).fillMaxSize(), columns = GridCells.Adaptive(50.dp)) {
-                        state.grid.forEach { row ->
-                            row.forEach { cell ->
-                                item {Row(horizontalArrangement = Arrangement.Center,modifier = Modifier.border(
-                                    shape = RectangleShape,
-                                    width = 1.dp,
-                                    color = Color.Black
-                                ).padding(vertical = 10.dp, horizontal = 0.dp)
-                                    .selectable(selected = state.selectedCell == cell, onClick = {
-                                        state.selectedCell = cell
-                                    }))
-                                {
-                                    if (cell != null) {
-                                        Text(cell.value)
+                        items(state.n * state.n) {
+                            val row = it / state.n
+                            val col = it % state.n
+                            val cell = state.grid[row][col]
+                            Row(horizontalArrangement = Arrangement.Center,modifier = Modifier.border(
+                                        shape = RectangleShape,
+                                        width = 1.dp,
+                                        color = Color.Black
+                                    ).padding(vertical = 10.dp, horizontal = 0.dp)
+                                        .selectable(selected = state.selectedCell == cell, onClick = {
+                                            state.selectedCell = cell
+                                        }))
+                                    {
+                                        if (cell != null) {
+                                            Text(cell.value)
+                                        }
                                     }
-                                    //print("Potential Values:" + cell.potentialValues.toString())
-                                }
+                                    }
                                 }
                             }
                         }
                     }
                 }
-        }
-    }
-}
 
 
 fun main() = application {
-
     Window(onCloseRequest = ::exitApplication) {
         App()
     }
