@@ -1,13 +1,6 @@
-class BruteSolver(cell: Cell, grid: List<List<Cell?>>, size: Int) : SudokuSolver(cell,grid,size){
-    fun setValue ():Boolean{
-        if (cell.potentialValues.size == 1) {
-            cell.value = cell.potentialValues.first()
-            return true
-        }
-        return false
-    }
+class BruteSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) : SudokuSolver(cell,grid,n){
+
     override fun checkRow(row: List<Cell?>): Boolean {
-        //println("potential Values:" + cell.potentialValues)
         for (c in row){
             if (c != null) {
                 cell.removePotentialValue(c.value)

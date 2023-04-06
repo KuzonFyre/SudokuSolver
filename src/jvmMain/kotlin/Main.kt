@@ -23,7 +23,7 @@ import java.awt.Frame
 @Composable
 @Preview
 fun App() {
-    val viewModel: AppViewModel = remember{ AppViewModel() }
+    val viewModel: AppViewModel = remember { AppViewModel() }
     val state = viewModel.state
     var isFileChooserOpen by remember { mutableStateOf(false) }
     if (isFileChooserOpen) {
@@ -34,50 +34,73 @@ fun App() {
             }
         }
     }
-    MaterialTheme {
-        Column(modifier = Modifier.fillMaxSize()) {
-            Row(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.1f)) {
-                Column {
-                    Button(onClick = {
-                        isFileChooserOpen = true
-                    }) {
-                        Text("Select Board")
+    if (state.isValidData) {
+        MaterialTheme {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Row(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.1f)) {
+                    Column {
+                        Button(onClick = {
+                            isFileChooserOpen = true
+                        }) {
+                            Text("Select Board")
+                        }
+                    }
+                    Column {
+                        Button(onClick = {
+                            viewModel.solve()
+                            //viewModel.solveCell()
+                        }) {
+                            Text("Solve grid")
+                        }
                     }
                 }
-                Column {
-                    Button(onClick = {
-                        viewModel.solve()
-                        //viewModel.solveCell()
-                    }) {
-                        Text("Solve grid")
-                    }
-                }
-            }
-            Row(modifier = Modifier.fillMaxSize()) {
-                    LazyVerticalGrid(modifier = Modifier.border(shape = RectangleShape, width = 1.dp, color = Color.Black).fillMaxSize(), columns = GridCells.Adaptive(50.dp)) {
+                Row(modifier = Modifier.fillMaxSize()) {
+                    LazyVerticalGrid(
+                        modifier = Modifier.border(
+                            shape = RectangleShape,
+                            width = 1.dp,
+                            color = Color.Black
+                        ).fillMaxSize(), columns = GridCells.Adaptive(50.dp)
+                    ) {
                         items(state.n * state.n) {
                             val row = it / state.n
                             val col = it % state.n
                             val cell = state.grid[row][col]
-                            Row(horizontalArrangement = Arrangement.Center,modifier = Modifier.border(
-                                        shape = RectangleShape,
-                                        width = 1.dp,
-                                        color = Color.Black
-                                    ).padding(vertical = 10.dp, horizontal = 0.dp)
-                                        .selectable(selected = state.selectedCell == cell, onClick = {
-                                            state.selectedCell = cell
-                                        }))
-                                    {
-                                        if (cell != null) {
-                                            Text(cell.value)
-                                        }
-                                    }
-                                    }
+                            Row(horizontalArrangement = Arrangement.Center, modifier = Modifier.border(
+                                shape = RectangleShape,
+                                width = 1.dp,
+                                color = Color.Black
+                            ).padding(vertical = 10.dp, horizontal = 0.dp)
+                                .selectable(selected = state.selectedCell == cell, onClick = {
+                                    state.selectedCell = cell
+                                })
+                            )
+                            {
+                                if (cell != null) {
+                                    Text(cell.value)
                                 }
                             }
                         }
                     }
                 }
+            }
+        }
+    }else{
+        MaterialTheme {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Row(modifier = Modifier.fillMaxWidth().fillMaxHeight(0.1f)) {
+                    Column {
+                        Button(onClick = {
+                            isFileChooserOpen = true
+                        }) {
+                            Text("Select Board")
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
 
 
 fun main() = application {
@@ -103,5 +126,3 @@ private fun FileDialog(
     },
     dispose = FileDialog::dispose
 )
-//b = bruteForceSolve()
-//b.solve
