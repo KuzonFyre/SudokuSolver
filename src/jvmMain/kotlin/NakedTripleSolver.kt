@@ -2,10 +2,10 @@ import java.util.Collections.emptyList
 
 class NakedTripleSolver(cell: Cell, grid: List<List<Cell?>>, size: Int): SudokuSolver(cell,grid,size){
     override fun checkRow(row: List<Cell?>): Boolean {
-        if (!checkSize()){ return false }
+        if (!checkSize(cell)){ return false }
         val triple: MutableList<Cell?> = emptyList()
         for(c in row){
-            if (c != null && c!= cell && (c.potentialValues.size == 2 || c.potentialValues.size ==3)){
+            if (c != null && c!= cell && checkSize(c)){
                 triple.add(c)
             }
         }
@@ -13,44 +13,80 @@ class NakedTripleSolver(cell: Cell, grid: List<List<Cell?>>, size: Int): SudokuS
             return false
         }
 
-        cell.potentialValues union cell.potentialValues
-
+        val removeSet = (triple[2]?.let { (triple[1]?.let { triple[0]?.potentialValues?.union(it.potentialValues) })?.union(it.potentialValues) })
+        if (removeSet != null) {
+            if (removeSet.size != 3){
+                return false
+            }
+            for (c in row){
+                if (c != null && c != cell && c != triple[0] && c != triple[1] && c != triple[2]){
+                    c.potentialValues.removeAll(removeSet)
+                }
+            }
+            return true
+        }
         return false
-
-//        for (c in row) {
-//            if (c != null && c.potentialValues.size <= 3) {
-////                if(c.potentialValues.containsAll(cell.potentialValues) && cell.potentialValues.containsAll(c.potentialValues) && c.potentialValues.size == 2 && cell.potentialValues.size == 2){
-////                    removePair = c
-////                    break
-////                }
-//
-//                print("Triple$triple")
-//                if (triple.size == 2 && triple.flatMap { it?.potentialValues ?: setOf() }.distinct().size == 2) {
-//                    removeTriple = triple + c
-//                    break
-//                }
-//            }
-//        }
-//        if (removeTriple == null) {
-//            return false
-//        }
-//        for (c in row) {
-//            if (c !in removeTriple && c != null) {
-//                c.potentialValues.removeAll(removeTriple.flatMap { it?.potentialValues ?: emptyList() })
-//            }
-//        }
     }
 
     override fun checkColumn(col: List<Cell?>): Boolean {
+        if (!checkSize(cell)){ return false }
+        val triple: MutableList<Cell?> = emptyList()
+        for(c in col){
+            if (c != null && c!= cell && checkSize(c)){
+                triple.add(c)
+            }
+        }
+        if(triple.size != 3){
+            return false
+        }
+
+        val removeSet = (triple[2]?.let { (triple[1]?.let { triple[0]?.potentialValues?.union(it.potentialValues) })?.union(it.potentialValues) })
+        if (removeSet != null) {
+            if (removeSet.size != 3){
+                return false
+            }
+            for (c in col){
+                if (c != null && c != cell && c != triple[0] && c != triple[1] && c != triple[2]){
+                    c.potentialValues.removeAll(removeSet)
+                }
+            }
+            return true
+        }
         return false
     }
-
     override fun checkBox(box: List<List<Cell?>>): Boolean {
+        if (!checkSize(cell)){ return false }
+        val triple: MutableList<Cell?> = emptyList()
+        for(row in box) {
+            for (c in row) {
+                if (c != null && c != cell && checkSize(c)) {
+                    triple.add(c)
+                }
+            }
+        }
+        if(triple.size != 3){
+            return false
+        }
+
+        val removeSet = (triple[2]?.let { (triple[1]?.let { triple[0]?.potentialValues?.union(it.potentialValues) })?.union(it.potentialValues) })
+        if (removeSet != null) {
+            if (removeSet.size != 3){
+                return false
+            }
+            for (row in box){
+                for (c in row) {
+                    if (c != null && c != cell && c != triple[0] && c != triple[1] && c != triple[2]) {
+                        c.potentialValues.removeAll(removeSet)
+                    }
+                }
+            }
+            return true
+        }
         return false
     }
 
-    fun checkSize(): Boolean {
-        return cell.potentialValues.size == 2 || cell.potentialValues.size == 3
+    fun checkSize(c: Cell): Boolean {
+        return c.potentialValues.size == 2 || c.potentialValues.size == 3
     }
 }
 

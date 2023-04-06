@@ -37,11 +37,17 @@ class AppViewModel {
                 }
             }
         }
-        print("Solved Grid:${state._grid}")
+        //print("Solved Grid:${state._grid}")
+        for (i in 0 until state.n) {
+            for (j in 0 until state.n) {
+                print("${state._grid[i][j]?.value} ")
+            }
+            println()
+        }
 
     }
 
-    fun cleanGrid() {
+    private fun cleanGrid() {
         for (i in 0 until state.n) {
             for (j in 0 until state.n) {
                 if (state._grid[i][j]?.value != "-"){

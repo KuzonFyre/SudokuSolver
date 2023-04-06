@@ -37,7 +37,7 @@ abstract class SudokuSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) {
         val startCol = size * (cell.col / size)
         val box: List<List<Cell?>> = List(size) { row ->
             List(size) { col ->
-                print("Row: ${startRow + row} Col: ${startCol + col}  ")
+                //print("Row: ${startRow + row} Col: ${startCol + col}  ")
                 grid[startRow + row][startCol + col]
             }
         }
