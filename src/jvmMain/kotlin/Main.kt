@@ -32,7 +32,6 @@ fun App() {
         FileDialog {
             isFileChooserOpen = false
             if (it != null) {
-                print("DATA SET")
                 viewModel.setData(it)
             }
         }
@@ -50,8 +49,8 @@ fun App() {
                     }
                     Column {
                         Button(onClick = {
-                            viewModel.solve()
-                            //viewModel.solveCell()
+                            //viewModel.solve()
+                            viewModel.solveCell()
                         }) {
                             Text("Solve grid")
                         }

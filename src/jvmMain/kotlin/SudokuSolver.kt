@@ -4,30 +4,28 @@ abstract class SudokuSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) {
     var grid: List<List<Cell?>>
     var cell: Cell
     var n: Int
-
-    //private var isSolved: Boolean = false
     init {
         this.grid = grid
         this.cell = cell
         this.n = n
     }
-    abstract fun checkRow(row: List<Cell?>): Boolean
-    abstract fun checkColumn(col: List<Cell?>): Boolean
-    abstract fun checkBox(box: List<List<Cell?>>): Boolean
+    abstract fun checkRow(row: List<Cell?>)
+    abstract fun checkColumn(col: List<Cell?>)
+    abstract fun checkBox(box: List<List<Cell?>>)
 
-    fun setValue ():Boolean{
+    fun setValue (){
         if (cell.potentialValues.size == 1) {
             cell.value = cell.potentialValues.first()
-            return true
+            cell.potentialValues.clear()
         }
-        return false
     }
     fun getRow(): List<Cell?> {
         return grid[cell.row]
     }
     fun getColumn(): List<Cell?>{
+        println("Current Row" + cell.row)
         val columns: List<Cell?> = List(n) { col ->
-            grid[cell.row][col]
+            grid[col][cell.row]
         }
         return columns
     }
@@ -37,18 +35,20 @@ abstract class SudokuSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) {
         val startCol = size * (cell.col / size)
         val box: List<List<Cell?>> = List(size) { row ->
             List(size) { col ->
-                //print("Row: ${startRow + row} Col: ${startCol + col}  ")
                 grid[startRow + row][startCol + col]
             }
         }
         return box
     }
 //    Template Method
-    fun solve(): Boolean{
+    fun solve(){
         checkBox(getBox())
         checkRow(getRow())
+        println("ColumnB" + getColumn())
         checkColumn(getColumn())
-        return setValue()
+        println("ColumnA" + getColumn())
+        println("Current Cell: $cell")
+        setValue()
     }
 
 

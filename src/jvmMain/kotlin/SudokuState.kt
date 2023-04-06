@@ -5,76 +5,73 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import java.io.File
-import kotlin.math.sqrt
 
 class AppViewModel {
     val state = SudokuState()
 
     fun solve() {
-        cleanGrid()
-        for (i in 0 until state.n) {
-            for (j in 0 until state.n) {
-                var solver: SudokuSolver
-                if (state._grid[i][j]?.value == "-") {
-                    println("\nGrid:$state.grid")
-                    val boxSize = sqrt(state.n.toDouble()).toInt()
-                    solver = state._grid[i][j]?.let { BruteSolver(it, state._grid, state.n) }!!
+            for (i in 0 until state.n) {
+                for (j in 0 until state.n) {
+                    var solver: SudokuSolver
+                    if (state._grid[i][j]?.value == "-") {
+                        solver = state._grid[i][j]?.let { BruteSolver(it, state._grid, state.n) }!!
+                        solver.solve()
 
-                    if (solver.solve()) {
-                        println("Solved:" + (solver.grid[i][j]?.value))
-                    }
-                    solver = state._grid[i][j]?.let { NakedPairSolver(it, state._grid, state.n) }!!
-                    if (solver.solve()) {
-                        println("Solved:" + (solver.grid[i][j]?.value))
-                    }
-                    solver = state._grid[i][j]?.let { NakedTripleSolver(it, state._grid, state.n) }!!
-                    if (solver.solve()) {
-                        println("Solved:" + (solver.grid[i][j]?.value))
-                    }
-                    solver.grid[i][j]?.value?.let { state._grid[i][j]?.copy(value = it) }
+                        copyGrid(solver)
 
+                        solver = state._grid[i][j]?.let { NakedPairSolver(it, state._grid, state.n) }!!
+                        copyGrid(solver)
+                        solver.solve()
+                        solver = state._grid[i][j]?.let { NakedTripleSolver(it, state._grid, state.n) }!!
+                        copyGrid(solver)
+                        solver.solve()
 
+                    }
                 }
             }
-        }
-        //print("Solved Grid:${state._grid}")
+        printGrid()
+    }
+
+    fun copyGrid(solver: SudokuSolver){
         for (i in 0 until state.n) {
             for (j in 0 until state.n) {
-                print("${state._grid[i][j]?.value} ")
+                solver.grid[i][j]?.value?.let { state._grid[i][j]?.copy(value = it) }
+            }
+        }
+    }
+    fun printGrid() {
+        for (i in 0 until state.n) {
+            for (j in 0 until state.n) {
+                print("${state._grid[i][j]} ")
             }
             println()
         }
-
     }
-
-    private fun cleanGrid() {
-        for (i in 0 until state.n) {
-            for (j in 0 until state.n) {
-                if (state._grid[i][j]?.value != "-"){
-                    state._grid[i][j]?.potentialValues?.clear()
-                }
-            }
-        }
-    }
+//    if (solver.solve()) {
+//        solver.grid[state.selectedCell!!.row][state.selectedCell!!.col]?.value?.let {
+//            state._grid[state.selectedCell!!.row][state.selectedCell!!.col]?.copy(
+//                value = it
+//            )
+//        }
+//    }
     //25 by 25 901
     //TODO check for invalid input
     fun solveCell() {
+        var solver: SudokuSolver
         if (state.selectedCell?.value == "-") {
-            val solver = BruteSolver(state.selectedCell!!, state._grid, state.n)
-            println("Checking")
-            if (solver.solve()) {
-                //println("Solved:" + (solver.grid[i][j]?.value))
-//                solver.cell.value.let { state.selectedCell?.copy(value = it) }
-                solver.grid[state.selectedCell!!.row][state.selectedCell!!.col]?.value?.let {
-                    state._grid[state.selectedCell!!.row][state.selectedCell!!.col]?.copy(
-                        value = it
-                    )
-                }
-                //state._grid[state.selectedCell!!.row][state.selectedCell!!.col]?.copy(value = solver.cell.value)
+            solver = BruteSolver(state.selectedCell!!, state._grid, state.n)
+            solver.solve()
+            copyGrid(solver)
+            solver = NakedPairSolver(state.selectedCell!!, state._grid, state.n)
+            solver.solve()
+            copyGrid(solver)
+            solver = NakedTripleSolver(state.selectedCell!!, state._grid, state.n)
+            solver.solve()
+            copyGrid(solver)
 
-                //solver.grid[i][j]?.value?.let { state._grid[i][j]?.copy(value = it) }
-            }
         }
+        println("Value: " + state.selectedCell?.value)
+        printGrid()
     }
 
 
@@ -110,6 +107,7 @@ class SudokuState {
     var isValidData by mutableStateOf(false)
     var values: MutableSet<String> = mutableSetOf()
     var selectedCell by mutableStateOf<Cell?>(null)
+    var isSolved by mutableStateOf(false)
 
     fun clearData(){
         _grid.clear()
