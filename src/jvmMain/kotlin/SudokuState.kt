@@ -11,6 +11,7 @@ class AppViewModel {
     val state = SudokuState()
 
     fun solve() {
+        cleanGrid()
         for (i in 0 until state.n) {
             for (j in 0 until state.n) {
                 var solver: SudokuSolver
@@ -26,7 +27,13 @@ class AppViewModel {
                     if (solver.solve()) {
                         println("Solved:" + (solver.grid[i][j]?.value))
                     }
+                    solver = state._grid[i][j]?.let { NakedTripleSolver(it, state._grid, state.n) }!!
+                    if (solver.solve()) {
+                        println("Solved:" + (solver.grid[i][j]?.value))
+                    }
                     solver.grid[i][j]?.value?.let { state._grid[i][j]?.copy(value = it) }
+
+
                 }
             }
         }
@@ -34,6 +41,15 @@ class AppViewModel {
 
     }
 
+    fun cleanGrid() {
+        for (i in 0 until state.n) {
+            for (j in 0 until state.n) {
+                if (state._grid[i][j]?.value != "-"){
+                    state._grid[i][j]?.potentialValues?.clear()
+                }
+            }
+        }
+    }
     //25 by 25 901
     //TODO check for invalid input
     fun solveCell() {
@@ -64,8 +80,8 @@ class AppViewModel {
             // read the grid size
             state.n = fileContent?.get(0)?.toInt()!!
             state.values = fileContent[1].split(" ").toMutableSet()
-            //state.grid.value = MutableList(state.n) { MutableList(state.n) { null } }
-            // read the grid
+            println("Values: ${state.values}")
+            println("N: ${state.n}")
             for (i in 0 until state.n) {
                 val row = fileContent[i + 2].split(" ")
                 state._grid.add(mutableStateListOf())
@@ -74,6 +90,7 @@ class AppViewModel {
                     state._grid[i].add(Cell(row[j], entries, i, j))
                 }
             }
+            println("Grid${state._grid[0][0]}")
             state.isValidData = true
         } catch (e: Exception) {
             state.isValidData = false
@@ -81,10 +98,18 @@ class AppViewModel {
     }
 }
 class SudokuState {
-        var n by mutableStateOf(0)
+    var n by mutableStateOf(0)
     var _grid = mutableStateListOf(mutableStateListOf<Cell?>())
     val grid: List<List<Cell?>> get() = _grid
     var isValidData by mutableStateOf(false)
-        var values: MutableSet<String> = mutableSetOf()
-        var selectedCell by mutableStateOf<Cell?>(null)
+    var values: MutableSet<String> = mutableSetOf()
+    var selectedCell by mutableStateOf<Cell?>(null)
+
+    fun clearData(){
+        _grid.clear()
+        isValidData = false
+        n = 0
+        values.clear()
+        selectedCell = null
+    }
 }

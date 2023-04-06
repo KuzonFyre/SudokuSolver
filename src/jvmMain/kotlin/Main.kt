@@ -12,9 +12,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.AwtWindow
 import androidx.compose.ui.window.Window
+import androidx.compose.ui.window.WindowState
 import androidx.compose.ui.window.application
 import java.awt.FileDialog
 import java.awt.Frame
@@ -30,6 +32,7 @@ fun App() {
         FileDialog {
             isFileChooserOpen = false
             if (it != null) {
+                print("DATA SET")
                 viewModel.setData(it)
             }
         }
@@ -60,7 +63,7 @@ fun App() {
                             shape = RectangleShape,
                             width = 1.dp,
                             color = Color.Black
-                        ).fillMaxSize(), columns = GridCells.Adaptive(50.dp)
+                        ).fillMaxSize(), columns = GridCells.Fixed(state.n)
                     ) {
                         items(state.n * state.n) {
                             val row = it / state.n
@@ -104,7 +107,7 @@ fun App() {
 
 
 fun main() = application {
-    Window(onCloseRequest = ::exitApplication) {
+    Window(state = WindowState(size = DpSize(500.dp,500.dp)), onCloseRequest = ::exitApplication) {
         App()
     }
 }
