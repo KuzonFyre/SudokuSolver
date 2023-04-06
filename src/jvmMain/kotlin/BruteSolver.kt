@@ -1,4 +1,4 @@
-class BruteSolver(cell: Cell, grid: List<List<Cell?>>) : SudokuSolver(cell,grid){
+class BruteSolver(cell: Cell, grid: List<List<Cell?>>, size: Int) : SudokuSolver(cell,grid,size){
     fun setValue ():Boolean{
         if (cell.potentialValues.size == 1) {
             cell.value = cell.potentialValues.first()
@@ -18,17 +18,20 @@ class BruteSolver(cell: Cell, grid: List<List<Cell?>>) : SudokuSolver(cell,grid)
 
 
     override fun checkColumn(col: List<Cell?>): Boolean {
-        for (cell in col){
-            if (cell != null) {
-                cell.potentialValues.remove(cell.value)
+        for (c in col){
+            if (c != null) {
+                cell.potentialValues.remove(c.value)
             }
         }
         return setValue()
     }
 
-    override fun checkBox(box: List<List<Cell>>): Boolean {
-        for (i in box.indices){
-            for (j in box[i].indices){
+    override fun checkBox(box: List<List<Cell?>>): Boolean {
+        for (row in box){
+            for (c in row){
+                if (c != null) {
+                    cell.potentialValues.remove(c.value)
+                }
             }
         }
         return setValue()

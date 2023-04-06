@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import java.io.File
+import kotlin.math.sqrt
 
 class AppViewModel {
     val state = SudokuState()
@@ -14,7 +15,8 @@ class AppViewModel {
             for (j in 0 until state.n) {
                 if (state._grid[i][j]?.value == "-") {
                     println("\nGrid:$state.grid")
-                    val solver = state._grid[i][j]?.let { BruteSolver(it, state._grid) }
+                    val boxSize = sqrt(state.n.toDouble()).toInt()
+                    val solver = state._grid[i][j]?.let { BruteSolver(it, state._grid,boxSize) }
                     if (solver != null) {
                         println("Checking")
                         if (solver.solve()) {
@@ -32,7 +34,7 @@ class AppViewModel {
     //TODO check for invalid input
     fun solveCell(){
         if (state.selectedCell?.value == "-") {
-            val solver = BruteSolver(state.selectedCell!!, state._grid)
+            val solver = BruteSolver(state.selectedCell!!, state._grid,state.n)
             println("Checking")
             if (solver.solve()) {
                 //println("Solved:" + (solver.grid[i][j]?.value))
