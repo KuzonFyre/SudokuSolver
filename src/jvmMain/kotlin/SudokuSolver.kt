@@ -46,7 +46,7 @@ abstract class SudokuSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) {
     }
 //    Template Method
     fun solve(){
-        //checkBox(getBox())
+        checkBox(getBox())
         setValue()
         checkRow(getRow())
         setValue()

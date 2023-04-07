@@ -16,9 +16,7 @@ class AppViewModel {
                     if (state._grid[i][j]?.value == "-") {
                         solver = state._grid[i][j]?.let { BruteSolver(it, state._grid, state.n) }!!
                         solver.solve()
-
                         copyGrid(solver)
-
                         solver = state._grid[i][j]?.let { NakedPairSolver(it, state._grid, state.n) }!!
                         copyGrid(solver)
                         solver.solve()
@@ -55,13 +53,6 @@ class AppViewModel {
             println()
         }
     }
-//    if (solver.solve()) {
-//        solver.grid[state.selectedCell!!.row][state.selectedCell!!.col]?.value?.let {
-//            state._grid[state.selectedCell!!.row][state.selectedCell!!.col]?.copy(
-//                value = it
-//            )
-//        }
-//    }
     //25 by 25 901
     //TODO check for invalid input
     fun solveCell() {
@@ -70,12 +61,12 @@ class AppViewModel {
             solver = BruteSolver(state.selectedCell!!, state._grid, state.n)
             solver.solve()
             copyGrid(solver)
-//            solver = NakedPairSolver(state.selectedCell!!, state._grid, state.n)
-//            solver.solve()
-//            copyGrid(solver)
-//            solver = NakedTripleSolver(state.selectedCell!!, state._grid, state.n)
-//            solver.solve()
-//            copyGrid(solver)
+            solver = NakedPairSolver(state.selectedCell!!, state._grid, state.n)
+            solver.solve()
+            copyGrid(solver)
+            solver = NakedTripleSolver(state.selectedCell!!, state._grid, state.n)
+            solver.solve()
+            copyGrid(solver)
 
         }
         //println("Value: " + state.selectedCell?.value)
