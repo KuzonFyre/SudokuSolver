@@ -105,9 +105,9 @@ class AppViewModel {
                 for (j in 0 until state.n) {
                     val entries = fileContent[1].split(" ").toMutableSet()
                     if(row[j] != "-") {
-                        state._grid[i].add(Cell(row[j], emptySet<String>().toMutableSet(), i, j))
+                        state._grid[i].add(Cell(row[j], emptySet<String>().toMutableSet(), i, j, mutableSetOf()))
                     }else{
-                        state._grid[i].add(Cell(row[j], entries, i, j))
+                        state._grid[i].add(Cell(row[j], entries, i, j, mutableSetOf()))
                     }
 
                 }

@@ -13,12 +13,14 @@ abstract class SudokuSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) {
     abstract fun checkColumn(col: List<Cell?>)
     abstract fun checkBox(box: List<List<Cell?>>)
 
-    fun setValue (){
-        print("Potential Values: " + cell.potentialValues)
+    open fun setValue (): Boolean{
+
         if (cell.potentialValues.size == 1) {
             cell.value = cell.potentialValues.first()
             cell.potentialValues.clear()
+            return true
         }
+        return false
     }
     fun getRow(): List<Cell?> {
         return grid[cell.row]
@@ -45,14 +47,18 @@ abstract class SudokuSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) {
 //    Template Method
     fun solve(){
         checkBox(getBox())
-        setValue()
         checkRow(getRow())
-        setValue()
-        //println("ColumnB" + getColumn())
         checkColumn(getColumn())
-        //println("ColumnA" + getColumn())
-        //println("Current Cell: $cell")
         setValue()
+//        checkBox(getBox())
+//        setValue()
+//        checkRow(getRow())
+//        setValue()
+//        //println("ColumnB" + getColumn())
+//        checkColumn(getColumn())
+//        //println("ColumnA" + getColumn())
+//        //println("Current Cell: $cell")
+//        setValue()
     }
 
 
