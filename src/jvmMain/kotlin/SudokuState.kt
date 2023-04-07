@@ -32,6 +32,14 @@ class AppViewModel {
         printGrid()
     }
 
+//    fun clearGrid() {
+//        for (i in 0 until state.n) {
+//            for (j in 0 until state.n) {
+//                if (state._grid[i][j]?.value != "-")
+//
+//            }
+//        }
+//    }
     fun copyGrid(solver: SudokuSolver){
         for (i in 0 until state.n) {
             for (j in 0 until state.n) {
@@ -62,15 +70,15 @@ class AppViewModel {
             solver = BruteSolver(state.selectedCell!!, state._grid, state.n)
             solver.solve()
             copyGrid(solver)
-            solver = NakedPairSolver(state.selectedCell!!, state._grid, state.n)
-            solver.solve()
-            copyGrid(solver)
-            solver = NakedTripleSolver(state.selectedCell!!, state._grid, state.n)
-            solver.solve()
-            copyGrid(solver)
+//            solver = NakedPairSolver(state.selectedCell!!, state._grid, state.n)
+//            solver.solve()
+//            copyGrid(solver)
+//            solver = NakedTripleSolver(state.selectedCell!!, state._grid, state.n)
+//            solver.solve()
+//            copyGrid(solver)
 
         }
-        println("Value: " + state.selectedCell?.value)
+        //println("Value: " + state.selectedCell?.value)
         printGrid()
     }
 
@@ -88,12 +96,18 @@ class AppViewModel {
             for (i in 0 until state.n) {
                 val row = fileContent[i + 2].split(" ")
                 state._grid.add(mutableStateListOf())
+                state._grid[i].clear()
                 for (j in 0 until state.n) {
                     val entries = fileContent[1].split(" ").toMutableSet()
-                    state._grid[i].add(Cell(row[j], entries, i, j))
+                    if(row[j] != "-") {
+                        state._grid[i].add(Cell(row[j], emptySet<String>().toMutableSet(), i, j))
+                    }else{
+                        state._grid[i].add(Cell(row[j], entries, i, j))
+                    }
+
                 }
             }
-            println("Grid${state._grid[0][0]}")
+            //printGrid()
             state.isValidData = true
         } catch (e: Exception) {
             state.isValidData = false

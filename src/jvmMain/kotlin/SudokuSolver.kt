@@ -14,6 +14,7 @@ abstract class SudokuSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) {
     abstract fun checkBox(box: List<List<Cell?>>)
 
     fun setValue (){
+        print("Potential Values: " + cell.potentialValues)
         if (cell.potentialValues.size == 1) {
             cell.value = cell.potentialValues.first()
             cell.potentialValues.clear()
@@ -25,7 +26,7 @@ abstract class SudokuSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) {
     fun getColumn(): List<Cell?>{
         println("Current Row" + cell.row)
         val columns: List<Cell?> = List(n) { col ->
-            grid[col][cell.row]
+            grid[col][cell.col]
         }
         return columns
     }
@@ -33,6 +34,9 @@ abstract class SudokuSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) {
         val size = sqrt(n.toDouble()).toInt()
         val startRow = size * (cell.row / size)
         val startCol = size * (cell.col / size)
+//        println("Start Row: $startRow")
+//        println("Start Col: $startCol")
+//        println(grid[startRow][startCol])
         val box: List<List<Cell?>> = List(size) { row ->
             List(size) { col ->
                 grid[startRow + row][startCol + col]
@@ -42,12 +46,14 @@ abstract class SudokuSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) {
     }
 //    Template Method
     fun solve(){
-        checkBox(getBox())
+        //checkBox(getBox())
+        setValue()
         checkRow(getRow())
-        println("ColumnB" + getColumn())
+        setValue()
+        //println("ColumnB" + getColumn())
         checkColumn(getColumn())
-        println("ColumnA" + getColumn())
-        println("Current Cell: $cell")
+        //println("ColumnA" + getColumn())
+        //println("Current Cell: $cell")
         setValue()
     }
 

@@ -12,7 +12,7 @@ class BruteSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) : SudokuSolver(ce
     override fun checkColumn(col: List<Cell?>){
         for (c in col){
             if (c != null) {
-                println(c.value)
+                //println(c.value)
                 cell.potentialValues.remove(c.value)
             }
         }
