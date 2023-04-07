@@ -14,6 +14,8 @@ repositories {
     mavenCentral()
     maven("https://maven.pkg.jetbrains.space/public/p/compose/dev")
 }
+dependencies {
+}
 
 kotlin {
     jvm {
@@ -28,7 +30,12 @@ kotlin {
                 implementation(compose.desktop.currentOs)
             }
         }
-        val jvmTest by getting
+        val jvmTest by getting{
+            dependencies {
+                implementation("junit:junit:4.13.2")
+                implementation(compose.desktop.currentOs)
+            }
+        }
     }
 }
 

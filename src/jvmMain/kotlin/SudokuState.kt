@@ -10,6 +10,8 @@ class AppViewModel {
     val state = SudokuState()
 
     fun solve() {
+        var solved = false
+        while(!solved) {
             for (i in 0 until state.n) {
                 for (j in 0 until state.n) {
                     var solver: SudokuSolver
@@ -27,6 +29,8 @@ class AppViewModel {
                     }
                 }
             }
+            solved = isSolved()
+        }
         printGrid()
     }
 
@@ -38,6 +42,16 @@ class AppViewModel {
 //            }
 //        }
 //    }
+    fun isSolved(): Boolean {
+        for (i in 0 until state.n) {
+            for (j in 0 until state.n) {
+                if (state._grid[i][j]?.value == "-") {
+                    return false
+                }
+            }
+        }
+        return true
+    }
     fun copyGrid(solver: SudokuSolver){
         for (i in 0 until state.n) {
             for (j in 0 until state.n) {

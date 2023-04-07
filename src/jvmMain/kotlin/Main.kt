@@ -50,9 +50,15 @@ fun App() {
                     Column {
                         Button(onClick = {
                             viewModel.solve()
-                            //viewModel.solveCell()
                         }) {
                             Text("Solve grid")
+                        }
+                    }
+                    Column {
+                        Button(onClick = {
+                            viewModel.solveCell()
+                        }) {
+                            Text("Solve Cell")
                         }
                     }
                 }
