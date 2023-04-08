@@ -14,7 +14,7 @@ class SudokuSolverTest {
         val n = 9
         grid = List(n) { i ->
             List(n) { j ->
-                Cell("-", mutableSetOf(), i, j, mutableSetOf())
+                Cell("-", mutableSetOf(), i, j)
             }
         }
 

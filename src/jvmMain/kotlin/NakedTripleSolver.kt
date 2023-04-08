@@ -5,7 +5,7 @@ class NakedTripleSolver(cell: Cell, grid: List<List<Cell?>>, size: Int): SudokuS
         if (!checkSize(cell)){ return }
         val triple: MutableList<Cell?> = emptyList()
         for(c in row){
-            if (c != null && c!= cell && checkSize(c) && c.value!= "-"){
+            if (c != null && c!= cell && checkSize(c)){
                 triple.add(c)
             }
         }
