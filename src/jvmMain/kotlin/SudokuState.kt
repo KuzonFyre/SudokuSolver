@@ -25,7 +25,7 @@ class AppViewModel {
                         solver = state._grid[i][j]?.let { NakedTripleSolver(it, state._grid, state.n) }!!
                         copyGrid(solver)
                         solver.solve()
-
+//                        solver = state._grid[i][j]?.let { GuessSolver(it, state._grid, state.n,state.guessesQueue) }!!
                     }
                 }
             }
@@ -34,14 +34,7 @@ class AppViewModel {
         printGrid()
     }
 
-//    fun clearGrid() {
-//        for (i in 0 until state.n) {
-//            for (j in 0 until state.n) {
-//                if (state._grid[i][j]?.value != "-")
-//
-//            }
-//        }
-//    }
+
     fun isSolved(): Boolean {
         for (i in 0 until state.n) {
             for (j in 0 until state.n) {
@@ -87,6 +80,29 @@ class AppViewModel {
         printGrid()
     }
 
+    fun guessCell(){
+        var solved = false
+            val solver: SudokuSolver = state._grid[state.selectedCell!!.row][state.selectedCell!!.col]?.let {
+                GuessSolver(
+                    it,
+                    state._grid,
+                    state.n
+                )
+            }!!
+            if (solver.solve()) {
+                copyGrid(solver)
+            } else {
+                val backTrackGrid = GuessQueue.popGuess()
+                for (i in 0 until state.n) {
+                    for (j in 0 until state.n) {
+                        backTrackGrid.grid[i][j]?.value?.let { state._grid[i][j]?.copy(value = it) }
+                    }
+                }
+//            }
+//            solved = isSolved()
+        }
+
+    }
 
     fun setData(fileName: String?) {
         try {
@@ -105,9 +121,9 @@ class AppViewModel {
                 for (j in 0 until state.n) {
                     val entries = fileContent[1].split(" ").toMutableSet()
                     if(row[j] != "-") {
-                        state._grid[i].add(Cell(row[j], emptySet<String>().toMutableSet(), i, j, mutableSetOf()))
+                        state._grid[i].add(Cell(row[j], emptySet<String>().toMutableSet(), i, j, mutableListOf()))
                     }else{
-                        state._grid[i].add(Cell(row[j], entries, i, j, mutableSetOf()))
+                        state._grid[i].add(Cell(row[j], entries, i, j, mutableListOf()))
                     }
 
                 }
@@ -118,6 +134,7 @@ class AppViewModel {
             state.isValidData = false
         }
     }
+
 }
 class SudokuState {
     var n by mutableStateOf(0)

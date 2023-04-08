@@ -45,11 +45,11 @@ abstract class SudokuSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) {
         return box
     }
 //    Template Method
-    fun solve(){
+    fun solve(): Boolean{
         checkBox(getBox())
         checkRow(getRow())
         checkColumn(getColumn())
-        setValue()
+        return setValue()
 //        checkBox(getBox())
 //        setValue()
 //        checkRow(getRow())

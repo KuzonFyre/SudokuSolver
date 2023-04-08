@@ -61,6 +61,13 @@ fun App() {
                             Text("Solve Cell")
                         }
                     }
+                    Column{
+                        Button(onClick = {
+                            viewModel.guessCell()
+                        }) {
+                            Text("Guess Cell")
+                        }
+                    }
                 }
                 Row(modifier = Modifier.fillMaxSize()) {
                     LazyVerticalGrid(
