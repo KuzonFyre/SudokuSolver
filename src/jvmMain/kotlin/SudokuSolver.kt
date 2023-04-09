@@ -14,7 +14,6 @@ abstract class SudokuSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) {
     abstract fun checkBox(box: List<List<Cell?>>)
 
     open fun setValue (): Boolean{
-
         if (cell.potentialValues.size == 1) {
             cell.value = cell.potentialValues.first()
             cell.potentialValues.clear()

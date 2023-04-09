@@ -13,7 +13,7 @@ class BruteSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) : SudokuSolver(ce
         for (c in col){
             if (c != null) {
                 //println(c.value)
-                cell.potentialValues.remove(c.value)
+                cell.removePotentialValue(c.value)
             }
         }
     }
@@ -22,7 +22,7 @@ class BruteSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) : SudokuSolver(ce
         for (row in box){
             for (c in row){
                 if (c != null) {
-                    cell.potentialValues.remove(c.value)
+                    cell.removePotentialValue(c.value)
                 }
             }
         }
