@@ -118,25 +118,27 @@ class AppViewModel {
             // read the grid size
             state.n = fileContent?.get(0)?.toInt()!!
             state.values = fileContent[1].split(" ").toMutableSet()
-            println("Values: ${state.values}")
-            println("N: ${state.n}")
+//            println("Values: ${state.values}")
+//            println("N: ${state.n}")
             for (i in 0 until state.n) {
                 val row = fileContent[i + 2].split(" ")
                 state._grid.add(mutableStateListOf())
                 state._grid[i].clear()
+                val entries = fileContent[1].split(" ").toMutableSet()
+                val validate = fileContent[1].split(" ").toMutableSet()
                 for (j in 0 until state.n) {
-                    val entries = fileContent[1].split(" ").toMutableSet()
                     if(row[j] != "-") {
-                        state._grid[i].add(Cell(row[j], emptySet<String>().toMutableSet(), i, j))
+                        if(validate.remove(row[j])) state._grid[i].add(Cell(row[j], emptySet<String>().toMutableSet(), i, j))
+                        else throw Exception("Invalid input")
                     }else{
                         state._grid[i].add(Cell(row[j], entries, i, j))
                     }
-
                 }
             }
             //printGrid()
             state.isValidData = true
         } catch (e: Exception) {
+            println(e.message)
             state.isValidData = false
         }
     }
