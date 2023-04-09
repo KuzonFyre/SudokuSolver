@@ -20,17 +20,17 @@ class AppViewModel {
                 backTrackGrid()
                 continue
             }
-            while(!updated) {
-                val cell = findFirst()
-                val solver = cell?.let { GuessSolver(it,state._grid, state.n) }
-                if (solver != null) {
-                    if(solver.solve()) {
-                        copyGrid(solver)
-                    } else {
-                        backTrackGrid()
-                    }
-                }
-            }
+//            while(!updated) {
+//                val cell = findFirst()
+//                val solver = cell?.let { GuessSolver(it,state._grid, state.n) }
+//                if (solver != null) {
+//                    if(solver.solve()) {
+//                        copyGrid(solver)
+//                    } else {
+//                        backTrackGrid()
+//                    }
+//                }
+//            }
             solved = isSolved()
         }
             printGrid()
@@ -168,13 +168,13 @@ class AppViewModel {
                 val row = fileContent[i + 2].split(" ")
                 state._grid.add(mutableStateListOf())
                 state._grid[i].clear()
-                val entries = fileContent[1].split(" ").toMutableSet()
-                val validate = fileContent[1].split(" ").toMutableSet()
                 for (j in 0 until state.n) {
+                    val validate = fileContent[1].split(" ").toMutableSet()
                     if(row[j] != "-") {
                         if(validate.remove(row[j])) state._grid[i].add(Cell(row[j], emptySet<String>().toMutableSet(), i, j))
                         else throw Exception("Invalid input")
                     }else{
+                        val entries = fileContent[1].split(" ").toMutableSet()
                         state._grid[i].add(Cell(row[j], entries, i, j))
                     }
                 }

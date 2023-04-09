@@ -21,7 +21,7 @@ class GuessSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) : SudokuSolver(ce
             return false
         }
         val value = cell.potentialValues.random()
-        cell.potentialValues.remove(value)
+        //cell.potentialValues.remove(value)
         val gridCopy = List(n) { row ->
             List(n) { col ->
                 grid[row][col]?.copy()
