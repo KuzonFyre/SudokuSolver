@@ -11,35 +11,60 @@ class AppViewModel {
 
     fun solve() {
         var solved = false
-        var runCount = 0
+        var cellSolved: Boolean
         while(!solved) {
             for (i in 0 until state.n) {
                 for (j in 0 until state.n) {
                     var solver: SudokuSolver
                     if (state._grid[i][j]?.value == "-") {
                         solver = state._grid[i][j]?.let { BruteSolver(it, state._grid, state.n) }!!
-                        solver.solve()
+                        cellSolved = solver.solve()
                         copyGrid(solver)
                         solver = state._grid[i][j]?.let { NakedPairSolver(it, state._grid, state.n) }!!
-                        solver.solve()
+                        cellSolved = solver.solve() || cellSolved
                         copyGrid(solver)
-                        solver = state._grid[i][j]?.let { GuessSolver(it, state._grid, state.n) }!!
-                        solver.solve()
-                        copyGrid(solver)
-
-//                        solver = state._grid[i][j]?.let { NakedTripleSolver(it, state._grid, state.n) }!!
-//                        copyGrid(solver)
-//                        solver.solve()
-//                        solver = state._grid[i][j]?.let { GuessSolver(it, state._grid, state.n,state.guessesQueue) }!!
+                        if (!cellSolved){
+                            if (solver.solve()) {
+                                copyGrid(solver)
+                            } else {
+                                backTrackGrid()
+                            }
+                        }
+                        cellSolved = false
                     }
                 }
             }
-            runCount++
+            printGrid()
+            println(GuessQueue.toString())
             solved = isSolved()
         }
-        printGrid()
+
     }
 
+    fun backTrackGrid(){
+        val backTrackGrid = GuessQueue.popGuess()
+        for (i in 0 until state.n) {
+            for (j in 0 until state.n) {
+                backTrackGrid.grid[i][j]?.value?.let { state._grid[i][j]?.copy(value = it) }
+            }
+        }
+    }
+//    fun runRegSolve() {
+//        var updated = false
+//        for (i in 0 until state.n) {
+//            for (j in 0 until state.n) {
+//                var solver: SudokuSolver
+//                if (state._grid[i][j]?.value == "-") {
+//                    solver = state._grid[i][j]?.let { BruteSolver(it, state._grid, state.n) }!!
+//                    cellSolved = solver.solve()
+//                    copyGrid(solver)
+//                    solver = state._grid[i][j]?.let { NakedPairSolver(it, state._grid, state.n) }!!
+//                    cellSolved = solver.solve() || cellSolved
+//                    copyGrid(solver)
+//                }
+//            }
+//        }
+//    }
 
     fun isSolved(): Boolean {
         for (i in 0 until state.n) {
@@ -87,7 +112,6 @@ class AppViewModel {
     }
 
     fun guessCell(){
-        var solved = false
             val solver: SudokuSolver = state._grid[state.selectedCell!!.row][state.selectedCell!!.col]?.let {
                 GuessSolver(
                     it,

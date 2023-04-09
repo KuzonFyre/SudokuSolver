@@ -26,7 +26,7 @@ abstract class SudokuSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) {
         return grid[cell.row]
     }
     fun getColumn(): List<Cell?>{
-        println("Current Row" + cell.row)
+        //println("Current Row" + cell.row)
         val columns: List<Cell?> = List(n) { col ->
             grid[col][cell.col]
         }

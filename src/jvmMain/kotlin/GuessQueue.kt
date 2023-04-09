@@ -11,6 +11,9 @@ object GuessQueue {
         return guess
     }
 
+    override fun toString(): String {
+        return queue.toString()
+    }
 
 }
 data class GuessData(val grid: List<List<Cell?>>, val guess: String)
