@@ -12,8 +12,13 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.BaselineShift
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.AwtWindow
 import androidx.compose.ui.window.Window
 import androidx.compose.ui.window.WindowState
@@ -25,6 +30,11 @@ import java.awt.Frame
 @Composable
 @Preview
 fun App() {
+    val superscript = SpanStyle(
+        baselineShift = BaselineShift.Superscript,
+        fontSize = 16.sp, // font size of superscript
+        color = Color.Red // color
+    )
     val viewModel: AppViewModel = remember { AppViewModel() }
     val state = viewModel.state
     var isFileChooserOpen by remember { mutableStateOf(false) }
@@ -92,7 +102,13 @@ fun App() {
                             )
                             {
                                 if (cell != null) {
-                                    Text(cell.value)
+
+                                    Text(text = buildAnnotatedString {
+                                        append(cell.value)
+                                        withStyle(superscript) {
+                                            cell.potentialValues.forEach{ it1 -> append("(${it1})")}
+                                        }
+                                    })
                                 }
                             }
                         }

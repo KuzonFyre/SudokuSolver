@@ -11,6 +11,7 @@ class AppViewModel {
 
     fun solve() {
         var solved = false
+        var runCount = 0
         while(!solved) {
             for (i in 0 until state.n) {
                 for (j in 0 until state.n) {
@@ -20,15 +21,20 @@ class AppViewModel {
                         solver.solve()
                         copyGrid(solver)
                         solver = state._grid[i][j]?.let { NakedPairSolver(it, state._grid, state.n) }!!
-                        copyGrid(solver)
                         solver.solve()
-                        solver = state._grid[i][j]?.let { NakedTripleSolver(it, state._grid, state.n) }!!
                         copyGrid(solver)
+                        solver = state._grid[i][j]?.let { GuessSolver(it, state._grid, state.n) }!!
                         solver.solve()
+                        copyGrid(solver)
+
+//                        solver = state._grid[i][j]?.let { NakedTripleSolver(it, state._grid, state.n) }!!
+//                        copyGrid(solver)
+//                        solver.solve()
 //                        solver = state._grid[i][j]?.let { GuessSolver(it, state._grid, state.n,state.guessesQueue) }!!
                     }
                 }
             }
+            runCount++
             solved = isSolved()
         }
         printGrid()
@@ -71,9 +77,9 @@ class AppViewModel {
             solver = NakedPairSolver(state.selectedCell!!, state._grid, state.n)
             solver.solve()
             copyGrid(solver)
-            solver = NakedTripleSolver(state.selectedCell!!, state._grid, state.n)
-            solver.solve()
-            copyGrid(solver)
+//            solver = NakedTripleSolver(state.selectedCell!!, state._grid, state.n)
+//            solver.solve()
+//            copyGrid(solver)
 
         }
         //println("Value: " + state.selectedCell?.value)
@@ -121,9 +127,9 @@ class AppViewModel {
                 for (j in 0 until state.n) {
                     val entries = fileContent[1].split(" ").toMutableSet()
                     if(row[j] != "-") {
-                        state._grid[i].add(Cell(row[j], emptySet<String>().toMutableSet(), i, j, mutableListOf()))
+                        state._grid[i].add(Cell(row[j], emptySet<String>().toMutableSet(), i, j))
                     }else{
-                        state._grid[i].add(Cell(row[j], entries, i, j, mutableListOf()))
+                        state._grid[i].add(Cell(row[j], entries, i, j))
                     }
 
                 }
