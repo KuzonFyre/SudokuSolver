@@ -20,17 +20,17 @@ class AppViewModel {
                 backTrackGrid()
                 continue
             }
-//            while(!updated) {
-//                val cell = findFirst()
-//                val solver = cell?.let { GuessSolver(it,state._grid, state.n) }
-//                if (solver != null) {
-//                    if(solver.solve()) {
-//                        copyGrid(solver)
-//                    } else {
-//                        backTrackGrid()
-//                    }
-//                }
-//            }
+            if(!updated) {
+                val cell = findFirst()
+                val solver = cell?.let { GuessSolver(it,state._grid, state.n) }
+                if (solver != null) {
+                    if(solver.solve()) {
+                        copyGrid(solver)
+                    } else {
+                        backTrackGrid()
+                    }
+                }
+            }
             solved = isSolved()
         }
             printGrid()
@@ -51,7 +51,9 @@ class AppViewModel {
     private fun findFirst(): Cell? {
         for (i in 0 until state.n) {
             for (j in 0 until state.n) {
+                print("Value" + state._grid[i][j]?.value)
                 if (state._grid[i][j]?.value == "-") {
+                    print("Found empty cell at $i, $j")
                     return state._grid[i][j]
                 }
             }
@@ -81,8 +83,6 @@ class AppViewModel {
                 }
             }
         }
-        print("After reg solve")
-        printGrid()
         return updated
     }
 
@@ -164,12 +164,16 @@ class AppViewModel {
             state.values = fileContent[1].split(" ").toMutableSet()
 //            println("Values: ${state.values}")
 //            println("N: ${state.n}")
+            if (fileContent.size != state.n + 2) {
+                throw Exception("Invalid input: The number of lines in the file does not match the grid size.")
+            }
             for (i in 0 until state.n) {
+                val validate = fileContent[1].split(" ").toMutableSet()
+                print("Validate: $validate")
                 val row = fileContent[i + 2].split(" ")
                 state._grid.add(mutableStateListOf())
                 state._grid[i].clear()
                 for (j in 0 until state.n) {
-                    val validate = fileContent[1].split(" ").toMutableSet()
                     if(row[j] != "-") {
                         if(validate.remove(row[j])) state._grid[i].add(Cell(row[j], emptySet<String>().toMutableSet(), i, j))
                         else throw Exception("Invalid input")

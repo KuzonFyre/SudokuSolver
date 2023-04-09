@@ -126,7 +126,7 @@ fun App() {
                         }) {
                             Text("Select Board")
                         }
-                    }
+                   }
                 }
             }
         }
