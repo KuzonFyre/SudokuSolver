@@ -27,6 +27,7 @@ import java.awt.FileDialog
 import java.awt.Frame
 
 
+
 @Composable
 @Preview
 fun App() {
@@ -38,6 +39,15 @@ fun App() {
     val viewModel: AppViewModel = remember { AppViewModel() }
     val state = viewModel.state
     var isFileChooserOpen by remember { mutableStateOf(false) }
+    var isFileExportOpen by remember { mutableStateOf(false) }
+    if (isFileExportOpen) {
+        FileDialog {
+            isFileExportOpen = false
+            if (it != null) {
+                viewModel.exportData(it)
+            }
+        }
+    }
     if (isFileChooserOpen) {
         FileDialog {
             isFileChooserOpen = false
@@ -66,16 +76,9 @@ fun App() {
                     }
                     Column {
                         Button(onClick = {
-                            viewModel.solveCell()
+                            isFileExportOpen = true
                         }) {
-                            Text("Solve Cell")
-                        }
-                    }
-                    Column{
-                        Button(onClick = {
-                            viewModel.guessCell()
-                        }) {
-                            Text("Guess Cell")
+                            Text("Export")
                         }
                     }
                 }
@@ -147,6 +150,25 @@ private fun FileDialog(
 ) = AwtWindow(
     create = {
         object : FileDialog(parent, "Choose a file", LOAD) {
+            override fun setVisible(value: Boolean) {
+                super.setVisible(value)
+                if (value) {
+                    onCloseRequest(file)
+                }
+            }
+        }
+    },
+    dispose = FileDialog::dispose
+)
+
+@Composable
+private fun SaveDialog(
+    parent: Frame? = null,
+    dialogType: Int = FileDialog.SAVE,
+    onCloseRequest: (result: String?) -> Unit
+) = AwtWindow(
+    create = {
+        object : FileDialog(parent, "Choose a file", dialogType) {
             override fun setVisible(value: Boolean) {
                 super.setVisible(value)
                 if (value) {

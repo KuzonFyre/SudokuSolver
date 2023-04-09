@@ -15,6 +15,7 @@ class NakedPairSolver(cell: Cell, grid: List<List<Cell?>>, n: Int): SudokuSolver
             for (c in li) {
                 if (c != removePair && c != cell) {
                     c?.potentialValues?.removeAll(removePair.potentialValues)
+
                 }
             }
         }

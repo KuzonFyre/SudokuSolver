@@ -21,15 +21,17 @@ class GuessSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) : SudokuSolver(ce
             return false
         }
         val value = cell.potentialValues.random()
-        cell.potentialValues.remove(value)
+        cell.removePotentialValue(value)
         val gridCopy = List(n) { row ->
             List(n) { col ->
                 grid[row][col]?.copy()
             }
         }
         GuessQueue.addGuess(gridCopy, value)
-
+        print("MY guess IS $value")
+        print(cell)
         cell.value = value
+        cell.removeAllPotentialValues()
         return true
     }
 

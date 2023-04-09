@@ -4,6 +4,7 @@ class BruteSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) : SudokuSolver(ce
         for (c in row){
             if (c != null) {
                 cell.removePotentialValue(c.value)
+                //if (c.potentialValues.size == 0 && c.value=="-") throw Exception("No potential values")
             }
         }
     }
@@ -14,6 +15,7 @@ class BruteSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) : SudokuSolver(ce
             if (c != null) {
                 //println(c.value)
                 cell.removePotentialValue(c.value)
+                //if (c.potentialValues.size == 0 && c.value=="-") throw Exception("No potential values")
             }
         }
     }
@@ -23,6 +25,7 @@ class BruteSolver(cell: Cell, grid: List<List<Cell?>>, n: Int) : SudokuSolver(ce
             for (c in row){
                 if (c != null) {
                     cell.removePotentialValue(c.value)
+                    //if (c.potentialValues.size == 0 && c.value=="-") throw Exception("No potential values")
                 }
             }
         }

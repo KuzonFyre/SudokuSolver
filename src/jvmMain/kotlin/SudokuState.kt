@@ -14,34 +14,39 @@ class AppViewModel {
         var updated = false
         while(!solved) {
             updated = runRegSolve()
-            print("Tag")
-            printGrid()
-            if(isUnsolvable()){
-                backTrackGrid()
-                continue
-            }
-            if(!updated) {
-                val cell = findFirst()
-                val solver = cell?.let { GuessSolver(it,state._grid, state.n) }
-                if (solver != null) {
-                    if(solver.solve()) {
-                        copyGrid(solver)
-                    } else {
-                        backTrackGrid()
-                    }
-                }
+            while(!updated){
+                guessCell()
+//                updated = runRegSolve()
+//                if (isUnsolvable() && GuessQueue.size()==0) {
+//                    println("Unsolvable")
+//                    backTrackGrid()
+//                    //state.isValidData = false
+//                }
             }
             solved = isSolved()
         }
+        state.isSolved = true
             printGrid()
-            println(GuessQueue.toString())
         }
 
+    private fun guessCell() {
+        val cell = findFirst()
+//        println(cell)
+//        println(GuessQueue.toString())
+        val solver = cell?.let { GuessSolver(it, state._grid, state.n) }
+        if (solver != null) {
+            solver.setValue()
+            copyGrid(solver)
+            println(GuessQueue.toString())
+            printGrid()
+        }
+    }
 
     private fun isUnsolvable(): Boolean {
         for (i in 0 until state.n) {
             for (j in 0 until state.n) {
                 if (state._grid[i][j]?.value == "-" && state._grid[i][j]?.potentialValues?.isEmpty()!!) {
+                    println("THIS VALUE IS EMPTY" + state._grid[i][j])
                         return true
                     }
                 }
@@ -51,7 +56,7 @@ class AppViewModel {
     private fun findFirst(): Cell? {
         for (i in 0 until state.n) {
             for (j in 0 until state.n) {
-                print("Value" + state._grid[i][j]?.value)
+//                print("Value" + state._grid[i][j]?.value)
                 if (state._grid[i][j]?.value == "-") {
                     print("Found empty cell at $i, $j")
                     return state._grid[i][j]
@@ -61,12 +66,19 @@ class AppViewModel {
         throw Exception("No empty cells")
     }
     private fun backTrackGrid(){
+        if (GuessQueue.size()==0){
+            throw Exception("No guesses to backtrack")
+        }
         val backTrackGrid = GuessQueue.popGuess()
+        print("Before:")
+        printGrid()
         for (i in 0 until state.n) {
             for (j in 0 until state.n) {
-                backTrackGrid.grid[i][j]?.value?.let { state._grid[i][j]?.copy(value = it) }
+                state._grid[i][j] = backTrackGrid.grid[i][j]?.copy()
             }
         }
+        print("After:")
+        printGrid()
     }
     private fun runRegSolve(): Boolean {
         var updated = false
@@ -80,6 +92,10 @@ class AppViewModel {
                     solver = state._grid[i][j]?.let { NakedPairSolver(it, state._grid, state.n) }!!
                     updated = solver.solve() || updated
                     copyGrid(solver)
+                    solver = state._grid[i][j]?.let { NakedTripleSolver(it, state._grid, state.n) }!!
+                    updated = solver.solve() || updated
+                    copyGrid(solver)
+
                 }
             }
         }
@@ -112,7 +128,6 @@ class AppViewModel {
         }
     }
     //25 by 25 901
-    //TODO check for invalid input
     fun solveCell() {
         var solver: SudokuSolver
         if (state.selectedCell?.value == "-") {
@@ -131,39 +146,29 @@ class AppViewModel {
         printGrid()
     }
 
-    fun guessCell(){
-            val solver: SudokuSolver = state._grid[state.selectedCell!!.row][state.selectedCell!!.col]?.let {
-                GuessSolver(
-                    it,
-                    state._grid,
-                    state.n
-                )
-            }!!
-            if (solver.solve()) {
-                copyGrid(solver)
-            } else {
-                val backTrackGrid = GuessQueue.popGuess()
-                for (i in 0 until state.n) {
-                    for (j in 0 until state.n) {
-                        backTrackGrid.grid[i][j]?.value?.let { state._grid[i][j]?.copy(value = it) }
-                    }
+    fun exportData(fileName: String?) {
+        val currentDir = System.getProperty("user.dir")
+        val fileContent = File("$currentDir\\src\\jvmMain\\SamplePuzzles\\Output\\${fileName}").printWriter().use { out ->
+            out.println(state.n)
+            for (i in 0 until state.n) {
+                for (j in 0 until state.n) {
+                    out.print("${state._grid[i][j]?.value} ")
                 }
-//            }
-//            solved = isSolved()
+                out.println()
+            }
         }
-
     }
 
     fun setData(fileName: String?) {
         try {
             val currentDir = System.getProperty("user.dir")
-            val fileContent = fileName?.let { File("$currentDir\\src\\jvmMain\\SamplePuzzles\\Input\\$it").readLines() }
+            val fileContent = fileName?.let { File("$currentDir\\src\\jvmMain\\SamplePuzzles\\Input\\$it").readLines().filter {it1 ->  it1.isNotBlank() } }
 
             // read the grid size
             state.n = fileContent?.get(0)?.toInt()!!
             state.values = fileContent[1].split(" ").toMutableSet()
-//            println("Values: ${state.values}")
-//            println("N: ${state.n}")
+            print(fileContent.size)
+            print(state.n + 2)
             if (fileContent.size != state.n + 2) {
                 throw Exception("Invalid input: The number of lines in the file does not match the grid size.")
             }

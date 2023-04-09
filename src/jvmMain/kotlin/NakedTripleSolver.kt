@@ -3,7 +3,7 @@ import java.util.Collections.emptyList
 class NakedTripleSolver(cell: Cell, grid: List<List<Cell?>>, size: Int): SudokuSolver(cell,grid,size){
     override fun checkRow(row: List<Cell?>){
         if (!checkSize(cell)){ return }
-        val triple: MutableList<Cell?> = emptyList()
+        val triple: MutableList<Cell?> = mutableListOf()
         for(c in row){
             if (c != null && c!= cell && checkSize(c)){
                 triple.add(c)
@@ -16,6 +16,7 @@ class NakedTripleSolver(cell: Cell, grid: List<List<Cell?>>, size: Int): SudokuS
                 for (c in row) {
                     if (c != null && c != cell && c != triple[0] && c != triple[1] && c != triple[2]&& c.value!= "-") {
                         c.potentialValues.removeAll(removeSet)
+                        print("Naked Triple found")
                     }
                 }
             }
@@ -37,6 +38,7 @@ class NakedTripleSolver(cell: Cell, grid: List<List<Cell?>>, size: Int): SudokuS
                 for (c in col) {
                     if (c != null && c != cell && c != triple[0] && c != triple[1] && c != triple[2] && c.value!= "-") {
                         c.potentialValues.removeAll(removeSet)
+                        print("Naked Triple found")
                     }
                 }
             }
@@ -59,6 +61,7 @@ class NakedTripleSolver(cell: Cell, grid: List<List<Cell?>>, size: Int): SudokuS
                     for (c in row) {
                         if (c != null && c != cell && c != triple[0] && c != triple[1] && c != triple[2] && c.value!= "-") {
                             c.potentialValues.removeAll(removeSet)
+                            print("Naked Triple found")
                         }
                     }
                 }

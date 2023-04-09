@@ -5,6 +5,9 @@ object GuessQueue {
         queue.add(GuessData(grid, guess))
     }
 
+    fun size(): Int {
+        return queue.size
+    }
     fun popGuess(): GuessData {
         val guess = queue.last()
         queue.removeLast()
@@ -12,7 +15,7 @@ object GuessQueue {
     }
 
     override fun toString(): String {
-        return queue.toString()
+        return "Guess Queue$queue"
     }
 
 }
