@@ -15,13 +15,13 @@ class AppViewModel {
         while(!solved) {
             updated = runRegSolve()
             while(!updated){
-                guessCell()
-//                updated = runRegSolve()
-//                if (isUnsolvable() && GuessQueue.size()==0) {
-//                    println("Unsolvable")
-//                    backTrackGrid()
-//                    //state.isValidData = false
-//                }
+                if (GuessQueue.size()==0) {
+                    guessCell()
+                }else{
+                    backTrackGrid()
+                }
+
+                updated = true
             }
             solved = isSolved()
         }
@@ -31,8 +31,6 @@ class AppViewModel {
 
     private fun guessCell() {
         val cell = findFirst()
-//        println(cell)
-//        println(GuessQueue.toString())
         val solver = cell?.let { GuessSolver(it, state._grid, state.n) }
         if (solver != null) {
             solver.setValue()
@@ -56,7 +54,6 @@ class AppViewModel {
     private fun findFirst(): Cell? {
         for (i in 0 until state.n) {
             for (j in 0 until state.n) {
-//                print("Value" + state._grid[i][j]?.value)
                 if (state._grid[i][j]?.value == "-") {
                     print("Found empty cell at $i, $j")
                     return state._grid[i][j]
@@ -66,9 +63,6 @@ class AppViewModel {
         throw Exception("No empty cells")
     }
     private fun backTrackGrid(){
-        if (GuessQueue.size()==0){
-            throw Exception("No guesses to backtrack")
-        }
         val backTrackGrid = GuessQueue.popGuess()
         print("Before:")
         printGrid()
@@ -127,24 +121,6 @@ class AppViewModel {
             println()
         }
     }
-    //25 by 25 901
-    fun solveCell() {
-        var solver: SudokuSolver
-        if (state.selectedCell?.value == "-") {
-            solver = BruteSolver(state.selectedCell!!, state._grid, state.n)
-            solver.solve()
-            copyGrid(solver)
-            solver = NakedPairSolver(state.selectedCell!!, state._grid, state.n)
-            solver.solve()
-            copyGrid(solver)
-//            solver = NakedTripleSolver(state.selectedCell!!, state._grid, state.n)
-//            solver.solve()
-//            copyGrid(solver)
-
-        }
-        //println("Value: " + state.selectedCell?.value)
-        printGrid()
-    }
 
     fun exportData(fileName: String?) {
         val currentDir = System.getProperty("user.dir")
@@ -160,6 +136,7 @@ class AppViewModel {
     }
 
     fun setData(fileName: String?) {
+        state.clearData()
         try {
             val currentDir = System.getProperty("user.dir")
             val fileContent = fileName?.let { File("$currentDir\\src\\jvmMain\\SamplePuzzles\\Input\\$it").readLines().filter {it1 ->  it1.isNotBlank() } }
@@ -188,11 +165,8 @@ class AppViewModel {
                     }
                 }
             }
-//            print("OnCreate")
-//            printGrid()
             state.isValidData = true
         } catch (e: Exception) {
-            println(e.message)
             state.isValidData = false
         }
     }
